@@ -1,0 +1,17 @@
+[
+    "Dst Port",
+    "Flow Duration",
+    "Tot Fwd Pkts",
+    "Tot Bwd Pkts",
+    "TotLen Fwd Pkts",
+    "TotLen Bwd Pkts",
+    "Bwd Pkt Len Mean",
+    "Flow Byts/s",
+    "Flow Pkts/s",
+    "Flow IAT Mean",
+    "Fwd IAT Tot",
+    "SYN Flag Cnt",
+    "RST Flag Cnt",
+    "ACK Flag Cnt",
+    "Init Fwd Win Byts"
+]

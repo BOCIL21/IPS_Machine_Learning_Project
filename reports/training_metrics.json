@@ -1,0 +1,66 @@
+{
+    "dataset_used": "CSE-CIC-IDS2018 Multi-Attack (02-15-2018 DoS, 02-21-2018 DDoS, 02-28-2018 PortScan)",
+    "total_samples": 210000,
+    "train_samples": 147000,
+    "test_samples": 31500,
+    "training_duration_seconds": 2.77,
+    "avg_inference_latency_ms": 0.0021,
+    "accuracy": 0.8484444444444444,
+    "precision": 0.9038857815719753,
+    "recall": 0.7798095238095238,
+    "f1_score": 0.8372758879269208,
+    "confusion_matrix": [
+        [
+            14444,
+            1306
+        ],
+        [
+            3468,
+            12282
+        ]
+    ],
+    "classification_report": {
+        "Normal (Benign)": {
+            "precision": 0.8063867798124162,
+            "recall": 0.917079365079365,
+            "f1-score": 0.8581783613570197,
+            "support": 15750.0
+        },
+        "Anomali (Attack)": {
+            "precision": 0.9038857815719753,
+            "recall": 0.7798095238095238,
+            "f1-score": 0.8372758879269208,
+            "support": 15750.0
+        },
+        "accuracy": 0.8484444444444444,
+        "macro avg": {
+            "precision": 0.8551362806921958,
+            "recall": 0.8484444444444444,
+            "f1-score": 0.8477271246419702,
+            "support": 31500.0
+        },
+        "weighted avg": {
+            "precision": 0.8551362806921957,
+            "recall": 0.8484444444444444,
+            "f1-score": 0.8477271246419703,
+            "support": 31500.0
+        }
+    },
+    "feature_importances": {
+        "Dst Port": 0.1802316213212341,
+        "Init Fwd Win Byts": 0.14656721083911986,
+        "TotLen Fwd Pkts": 0.09634751436116346,
+        "Flow Pkts/s": 0.0800345508994769,
+        "Tot Fwd Pkts": 0.06594355201829868,
+        "Tot Bwd Pkts": 0.0626305225818807,
+        "TotLen Bwd Pkts": 0.06135807911521846,
+        "Fwd IAT Tot": 0.05915217088589989,
+        "Flow IAT Mean": 0.05609359464987879,
+        "Flow Duration": 0.055973043967145766,
+        "Bwd Pkt Len Mean": 0.05070255646886279,
+        "Flow Byts/s": 0.04373919000529954,
+        "RST Flag Cnt": 0.024712733689235242,
+        "ACK Flag Cnt": 0.014386293636481681,
+        "SYN Flag Cnt": 0.0021273655608042203
+    }
+}

@@ -1,0 +1,28 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Data & Large Archives (>100MB restricted by GitHub)
+data/*.csv
+downloads/
+*.ova
+*.iso
+*.vmdk
+*.vmem
+*.vmsn
+*.nvram
+*.log
+vms/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment
+.env
+venv/
+env/
+.idea/
+.vscode/

@@ -1,0 +1,282 @@
+[
+    {
+        "timestamp": "2026-11-01 23:58:40",
+        "attacker_ip": "192.168.10.151",
+        "attack_type": "False Alarm (Normal Traffic)",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.151 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:41",
+        "attacker_ip": "192.168.10.162",
+        "attack_type": "False Alarm (Normal Traffic)",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.162 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:41",
+        "attacker_ip": "192.168.10.164",
+        "attack_type": "False Alarm (Normal Traffic)",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.164 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:41",
+        "attacker_ip": "192.168.10.174",
+        "attack_type": "False Alarm (Normal Traffic)",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.174 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:41",
+        "attacker_ip": "192.168.10.180",
+        "attack_type": "False Alarm (Normal Traffic)",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.180 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:42",
+        "attacker_ip": "192.168.10.217",
+        "attack_type": "False Alarm (Normal Traffic)",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.217 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:42",
+        "attacker_ip": "192.168.10.233",
+        "attack_type": "False Alarm (Normal Traffic)",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.233 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:43",
+        "attacker_ip": "192.168.10.142",
+        "attack_type": "False Alarm (Normal Traffic)",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.142 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:43",
+        "attacker_ip": "192.168.10.148",
+        "attack_type": "False Alarm (Normal Traffic)",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.148 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:43",
+        "attacker_ip": "192.168.10.166",
+        "attack_type": "False Alarm (Normal Traffic)",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.166 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:44",
+        "attacker_ip": "192.168.10.192",
+        "attack_type": "False Alarm (Normal Traffic)",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.192 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:44",
+        "attacker_ip": "192.168.10.212",
+        "attack_type": "False Alarm (Normal Traffic)",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.212 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:44",
+        "attacker_ip": "192.168.10.221",
+        "attack_type": "False Alarm (Normal Traffic)",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.221 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:44",
+        "attacker_ip": "192.168.10.227",
+        "attack_type": "False Alarm (Normal Traffic)",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.227 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:45",
+        "attacker_ip": "192.168.10.239",
+        "attack_type": "False Alarm (Normal Traffic)",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.239 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:45",
+        "attacker_ip": "192.168.10.128",
+        "attack_type": "False Alarm (Normal Traffic)",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.128 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:46",
+        "attacker_ip": "192.168.10.181",
+        "attack_type": "False Alarm (Normal Traffic)",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.181 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:47",
+        "attacker_ip": "192.168.10.241",
+        "attack_type": "False Alarm (Normal Traffic)",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.241 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:47",
+        "attacker_ip": "192.168.10.101",
+        "attack_type": "False Alarm (Normal Traffic)",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.101 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:48",
+        "attacker_ip": "192.168.10.137",
+        "attack_type": "False Alarm (Normal Traffic)",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.137 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:50",
+        "attacker_ip": "192.168.10.50",
+        "attack_type": "DoS / DDoS Flood",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.50 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:50",
+        "attacker_ip": "192.168.10.51",
+        "attack_type": "DoS / DDoS Flood",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.51 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:50",
+        "attacker_ip": "192.168.10.52",
+        "attack_type": "DoS / DDoS Flood",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.52 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:50",
+        "attacker_ip": "192.168.10.53",
+        "attack_type": "DoS / DDoS Flood",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.53 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:50",
+        "attacker_ip": "192.168.10.54",
+        "attack_type": "DoS / DDoS Flood",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.54 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:50",
+        "attacker_ip": "192.168.10.55",
+        "attack_type": "DoS / DDoS Flood",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.55 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:50",
+        "attacker_ip": "192.168.10.56",
+        "attack_type": "DoS / DDoS Flood",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.56 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:50",
+        "attacker_ip": "192.168.10.57",
+        "attack_type": "DoS / DDoS Flood",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.57 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:50",
+        "attacker_ip": "192.168.10.58",
+        "attack_type": "DoS / DDoS Flood",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.58 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:58:50",
+        "attacker_ip": "192.168.10.59",
+        "attack_type": "DoS / DDoS Flood",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.59 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:59:00",
+        "attacker_ip": "192.168.10.70",
+        "attack_type": "Port Scanning / Infiltration",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.70 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:59:00",
+        "attacker_ip": "192.168.10.72",
+        "attack_type": "Port Scanning / Infiltration",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.72 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:59:00",
+        "attacker_ip": "192.168.10.75",
+        "attack_type": "Port Scanning / Infiltration",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.75 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:59:00",
+        "attacker_ip": "192.168.10.77",
+        "attack_type": "Port Scanning / Infiltration",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.77 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:59:00",
+        "attacker_ip": "192.168.10.79",
+        "attack_type": "Port Scanning / Infiltration",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.79 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:59:00",
+        "attacker_ip": "192.168.10.71",
+        "attack_type": "Port Scanning / Infiltration",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.71 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:59:01",
+        "attacker_ip": "192.168.10.73",
+        "attack_type": "Port Scanning / Infiltration",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.73 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:59:01",
+        "attacker_ip": "192.168.10.78",
+        "attack_type": "Port Scanning / Infiltration",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.78 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:59:01",
+        "attacker_ip": "192.168.10.76",
+        "attack_type": "Port Scanning / Infiltration",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.76 -j DROP",
+        "injection_latency_ms": 0.0
+    },
+    {
+        "timestamp": "2026-11-01 23:59:01",
+        "attacker_ip": "192.168.10.74",
+        "attack_type": "Port Scanning / Infiltration",
+        "rule_executed": "iptables -I FORWARD -s 192.168.10.74 -j DROP",
+        "injection_latency_ms": 0.0
+    }
+]

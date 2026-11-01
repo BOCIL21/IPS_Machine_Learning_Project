@@ -1,0 +1,8 @@
+# Machine Learning & Data Processing
+numpy>=1.26.0
+pandas>=2.2.0
+scikit-learn>=1.4.0
+joblib>=1.3.2
+
+# Packet Inspection & Network Security
+scapy>=2.5.0

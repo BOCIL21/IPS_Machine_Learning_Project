@@ -1,0 +1,35 @@
+{
+    "timestamp": "2026-11-01 23:58:37",
+    "model_architecture": "Random Forest Classifier (100 Trees, Gini, Balanced)",
+    "feature_count": 15,
+    "scenarios": {
+        "normal_traffic": {
+            "flows_tested": 500,
+            "allowed_flows": 480,
+            "false_alarms": 20,
+            "false_alarm_rate_pct": 4.0,
+            "avg_inference_latency_ms": 16.6821
+        },
+        "dos_ddos_flood": {
+            "attacks_tested": 300,
+            "detected_and_blocked": 300,
+            "detection_rate_pct": 100.0,
+            "avg_inference_latency_ms": 19.6899,
+            "avg_rule_injection_ms": 1.85
+        },
+        "port_scanning": {
+            "scans_tested": 300,
+            "detected_and_blocked": 109,
+            "detection_rate_pct": 36.33,
+            "avg_inference_latency_ms": 17.661
+        }
+    },
+    "overall_metrics": {
+        "total_flows_evaluated": 1100,
+        "mean_inference_latency_ms": 17.7694,
+        "p95_inference_latency_ms": 27.516,
+        "p99_inference_latency_ms": 28.8455,
+        "throughput_flows_per_second": 56.3,
+        "target_latency_status": "OPTIMAL"
+    }
+}

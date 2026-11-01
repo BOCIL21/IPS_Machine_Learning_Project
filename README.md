@@ -1,28 +1,28 @@
-# In-Line Machine Learning Intrusion Prevention System (IPS)
+# Sistem Pencegahan Intrusi Jaringan (IPS) Berbasis Machine Learning In-Line
 
 [![Python](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.4+-orange?logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
 [![Firewall](https://img.shields.io/badge/Firewall-Linux%20iptables%20%2F%20Netfilter-green?logo=linux&logoColor=white)](https://netfilter.org/)
-[![Dataset](https://img.shields.io/badge/Dataset-CSE--CIC--IDS2018%20(Official)-purple)](https://www.unb.ca/cic/datasets/ids-2018.html)
+[![Dataset](https://img.shields.io/badge/Dataset-CSE--CIC--IDS2018%20(Resmi)-purple)](https://www.unb.ca/cic/datasets/ids-2018.html)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-An end-to-end, production-grade **Machine Learning-driven Intrusion Prevention System (IPS)** that autonomously detects anomalous network flows in real-time and dynamically enforces kernel-level packet filtering via **Linux Netfilter / iptables**.
+Sistem **Intrusion Prevention System (IPS)** tingkat produksi (*production-grade*) berbasis **Machine Learning** yang mampu mendeteksi anomali aliran lalu lintas jaringan secara *real-time* dan melakukan mitigasi pencegahan aktif di level kernel Linux menggunakan **Netfilter / iptables**.
 
-Trained on over **210,000 official network flows** from the **CSE-CIC-IDS2018** benchmark dataset, this project achieves sub-millisecond inference latencies, ensuring in-line packet inspection without introducing network latency bottlenecks.
-
----
-
-## 🌟 Key Features
-
-* **Real-Time Flow Telemetry:** Sniffs live traffic and reconstructs 5-tuple bidirectional flows using Scapy, extracting 15 statistical CICFlowMeter features.
-* **Low-Latency Ensemble ML:** Random Forest Classifier achieving **84.84% multi-attack accuracy** (and **100% on targeted DoS floods**) with a batch inference latency of **0.0021 ms** per flow.
-* **Autonomous Kernel Mitigation:** Automatically executes `iptables -I FORWARD -s <ATTACKER_IP> -j DROP` upon anomaly detection with an average rule injection latency of **1.85 ms**.
-* **Automated 3-Node Virtual Testbed:** Pre-configured deployment scripts for VMware Workstation / OVF tool featuring dual-NIC gateway routing (`VMnet1` & `VMnet2`).
-* **International Standards Compliant:** Comprehensive [MODEL_CARD.md](MODEL_CARD.md) conforming to ACM FAT* / Mitchell et al. guidelines.
+Model AI dilatih menggunakan lebih dari **210.000 aliran trafik jaringan riil** dari dataset benchmark internasional resmi **CSE-CIC-IDS2018**. Sistem ini beroperasi secara *in-line* dengan kecepatan inferensi sub-milidetik, sehingga mampu melindungi jaringan tanpa menimbulkan *bottleneck* atau latensi tambahan pada pengguna sah.
 
 ---
 
-## 🏗️ System Architecture & Testbed Topology
+## 🌟 Fitur Utama
+
+* **Telemetri Aliran Real-Time:** Menangkap paket langsung dari antarmuka jaringan (*packet sniffing*) dan merekonstruksi aliran bidirectional 5-tuple menggunakan Scapy untuk mengekstraksi 15 fitur statistik standar CICFlowMeter.
+* **Klasifikasi Cepat Ensemble ML:** Menggunakan algoritma Random Forest Classifier dengan akurasi **84.84% pada skenario multi-serangan** (dan **100% pada serangan DoS terarah**), serta latensi inferensi batch hanya **0.0021 ms per aliran**.
+* **Mitigasi Otomatis Tingkat Kernel:** Secara otomatis mengeksekusi aturan `iptables -I FORWARD -s <IP_PENYERANG> -j DROP` seketika saat anomali terdeteksi, dengan rata-rata waktu injeksi aturan hanya **1.85 ms**.
+* **Topologi Testbed Virtual 3-Node:** Konfigurasi testbed VMware Workstation terisolasi dengan arsitektur Dual-NIC pada Gateway (`VMnet1` & `VMnet2`) berbasis Ubuntu 22.04 LTS Cloud Image (*autoinstall*).
+* **Dokumentasi Berstandar Internasional:** Dilengkapi dengan [MODEL_CARD.md](MODEL_CARD.md) yang mengacu pada standar pelaporan model internasional *Mitchell et al.* (ACM FAT* / IEEE / Hugging Face).
+
+---
+
+## 🏗️ Arsitektur Sistem & Topologi Testbed
 
 ```
        [Attacker-Node]                    [IPS-Gateway]                     [Victim-Server]
@@ -33,104 +33,104 @@ Trained on over **210,000 official network flows** from the **CSE-CIC-IDS2018** 
              └────────[ Switch: VMnet1 ]─────────┴────────[ Switch: VMnet2 ]────────┘
 ```
 
-### In-Line Inspection Pipeline
+### Alur Inspeksi Paket In-Line (Sequence Diagram)
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Attacker as Attacker (192.168.10.50)
+    actor Penyerang as Attacker (192.168.10.50)
     participant Gateway as IPS-Gateway (Scapy Engine)
-    participant RF as Random Forest Model
-    participant Iptables as Kernel iptables
-    actor Victim as Victim-Server (192.168.20.100)
+    participant RF as Model Random Forest
+    participant Iptables as Kernel Firewall (iptables)
+    actor Korban as Victim-Server (192.168.20.100)
 
-    Attacker->>Gateway: High-Rate Flooding Packets (SYN / DoS)
-    Gateway->>Gateway: Flow Cache Update & Feature Extraction (15 Features)
-    Gateway->>RF: Predict Scaled Feature Vector
-    RF-->>Gateway: Output: Class 1 (ANOMALOUS ATTACK)
-    Gateway->>Iptables: Inject Rule: iptables -I FORWARD -s 192.168.10.50 -j DROP (1.85 ms)
-    Iptables-->>Gateway: Rule Active in Kernel
-    Attacker--xGateway: Subsequent Packets Silently Dropped
-    Note over Victim: Victim Web Server Continues Running Without Disruption
+    Penyerang->>Gateway: Kirim Paket Flooding (SYN / DoS / Port Scan)
+    Gateway->>Gateway: Update Flow Cache & Ekstraksi 15 Fitur Aliran
+    Gateway->>RF: Prediksi Vektor Fitur (Min-Max Scaled)
+    RF-->>Gateway: Hasil: Kelas 1 (ANOMALI / SERANGAN)
+    Gateway->>Iptables: Injeksi Aturan: iptables -I FORWARD -s 192.168.10.50 -j DROP (1.85 ms)
+    Iptables-->>Gateway: Aturan Aktif di Kernel Firewall
+    Penyerang--xGateway: Paket Serangan Berikutnya Otomatis Dibuang (DROP)
+    Note over Korban: Server Web Korban Tetap Berjalan Normal Tanpa Mengalami Downtime
 ```
 
 ---
 
-## 📊 Benchmark & Evaluation Results
+## 📊 Hasil Evaluasi & Tolok Ukur Kinerja (Benchmark)
 
-Evaluated on unseen hold-out samples (31,500 test flows) from official CSE-CIC-IDS2018 datasets (`02-15-2018.csv`, `02-21-2018.csv`, `02-28-2018.csv`):
+Evaluasi dilakukan terhadap **31.500 sampel data uji independen (*unseen test data*)** dari dataset resmi CSE-CIC-IDS2018 (`02-15-2018.csv`, `02-21-2018.csv`, `02-28-2018.csv`):
 
-| Evaluation Scenario | Sample Size | Detection / Pass Rate | Average Inference Time | Rule Injection Time | Result Status |
+| Skenario Pengujian | Jumlah Sampel | Tingkat Keberhasilan | Rata-rata Waktu Inferensi | Waktu Injeksi Rule | Status Hasil |
 |:---|:---:|:---:|:---:|:---:|:---:|
-| **Normal Legitimate Browsing (HTTP/S)** | 500 flows | **96.00% Allowed** (4% False Alarm) | 17.65 ms | N/A | **Passed** |
-| **Volumetric DoS/DDoS (GoldenEye, HOIC)** | 300 flows | **100.00% Blocked** (0 Missed) | 17.82 ms | **1.85 ms** | **Mitigated Instantly** |
-| **Port Scanning & Infiltration (Nmap)** | 300 flows | **36.33% Blocked** | 17.66 ms | 1.92 ms | **Detected** |
+| **Trafik Pengguna Normal (HTTP/HTTPS)** | 500 aliran | **96.00% Diterima** (4% False Alarm) | 17.65 ms | N/A | **Lolos Validasi** |
+| **Banjir DoS/DDoS (GoldenEye, Slowloris, HOIC)** | 300 aliran | **100.00% Diblokir** (0 Lolos) | 17.82 ms | **1.85 ms** | **Mitigasi Sempurna** |
+| **Pemindaian Port & Infiltrasi (Nmap)** | 300 aliran | **36.33% Diblokir** | 17.66 ms | 1.92 ms | **Terdeteksi Aktif** |
 
-### Confusion Matrix
+### Matriks Konfusi (*Confusion Matrix*)
 
-$$\begin{pmatrix} \text{True Negative (Normal): } 14,444 & \text{False Positive (False Alarm): } 1,306 \\ \text{False Negative (Missed): } 3,468 & \text{True Positive (Attacks Blocked): } 12,282 \end{pmatrix}$$
+$$\begin{pmatrix} \text{Normal Terprediksi Benar (TN): } 14.444 & \text{False Alarm (FP): } 1.306 \\ \text{Serangan Terlewat (FN): } 3.468 & \text{Serangan Berhasil Diblokir (TP): } 12.282 \end{pmatrix}$$
 
-* **Overall Accuracy:** `84.84%`
-* **Precision:** `90.39%`
-* **Recall:** `77.98%`
+* **Akurasi Keseluruhan (*Accuracy*):** `84.84%`
+* **Presisi (*Precision*):** `90.39%`
+* **Sensitivitas (*Recall*):** `77.98%`
 * **F1-Score:** `83.73%`
 
 ---
 
-## 🔬 Top-15 Feature Weights (Gini Importance)
+## 🔬 Bobot & Kepentingan Fitur (*Top-15 Gini Importance*)
 
-The model leverages 15 optimal flow statistics selected for high discrimination and minimal computational complexity:
+Model memanfaatkan 15 fitur statistik aliran paling optimal berdasarkan nilai *Gini Impurity*:
 
 ```
-Rank  Feature Name        Weight (%)  Description
---------------------------------------------------------------------------------------
- 1    Dst Port              18.02%    Targeted destination port (80, 443, 22, etc.)
- 2    Init Fwd Win Byts     14.66%    Initial TCP window size (distinct tool signatures)
- 3    TotLen Fwd Pkts        9.63%    Accumulated payload byte size in forward direction
- 4    Flow Pkts/s            8.00%    Packet transmission rate per second
- 5    Tot Fwd Pkts           6.59%    Total packet count sent forward
- 6    Tot Bwd Pkts           6.26%    Total packet count returned by destination
- 7    TotLen Bwd Pkts        6.14%    Accumulated payload byte size in reverse direction
- 8    Fwd IAT Tot            5.92%    Total forward packet inter-arrival time
- 9    Flow IAT Mean          5.61%    Mean inter-arrival time between packets
-10    Flow Duration          5.60%    Connection lifetime (microseconds)
-11    Bwd Pkt Len Mean       5.07%    Mean packet length received in response
-12    Flow Byts/s            4.37%    Throughput rate in bytes per second
-13    RST Flag Cnt           2.47%    TCP Reset flag count (stealth scan indicator)
-14    ACK Flag Cnt           1.44%    TCP Acknowledgment flag count
-15    SYN Flag Cnt           0.21%    TCP Synchronize flag count (SYN flood indicator)
+Rank  Nama Fitur          Bobot (%)   Deskripsi Signifikansi Keamanan Jaringan
+-----------------------------------------------------------------------------------------------------
+ 1    Dst Port              18.02%    Port tujuan spesifik target (80, 443, 22, dll.)
+ 2    Init Fwd Win Byts     14.66%    Ukuran TCP Window awal (karakteristik unik tools serangan)
+ 3    TotLen Fwd Pkts        9.63%    Total akumulasi panjang payload paket arah maju
+ 4    Flow Pkts/s            8.00%    Kecepatan pengiriman paket per detik (indikator flooding)
+ 5    Tot Fwd Pkts           6.59%    Total jumlah paket maju tanpa menunggu balasan target
+ 6    Tot Bwd Pkts           6.26%    Jumlah paket balasan balik dari server target
+ 7    TotLen Bwd Pkts        6.14%    Total ukuran paket balasan (bernilai 0 pada DoS SYN flood)
+ 8    Fwd IAT Tot            5.92%    Total durasi waktu kedatangan aliran maju
+ 9    Flow IAT Mean          5.61%    Rata-rata interval waktu kedatangan antar paket
+10    Flow Duration          5.60%    Masa aktif koneksi (koneksi menggantung pada Slowloris)
+11    Bwd Pkt Len Mean       5.07%    Rata-rata panjang paket balik
+12    Flow Byts/s            4.37%    Laju konsumsi bandwidth per detik
+13    RST Flag Cnt           2.47%    Jumlah flag RST (indikator port scanning tertutup)
+14    ACK Flag Cnt           1.44%    Jumlah flag ACK (verifikasi penyelesaian handshake)
+15    SYN Flag Cnt           0.21%    Jumlah flag SYN (indikator koneksi half-open SYN flood)
 ```
 
 ---
 
-## 📁 Repository Structure
+## 📁 Struktur Direktori Repositori
 
 ```
 ├── models/
-│   ├── features.json           # Selected 15 feature names
-│   ├── model_ips_rf.joblib     # Pre-trained compressed Random Forest model (18.1 MB)
-│   └── scaler.joblib           # Pre-fitted MinMaxScaler
+│   ├── features.json           # Definisi 15 nama fitur yang digunakan model
+│   ├── model_ips_rf.joblib     # Model biner terlatih Random Forest terkompresi (18.1 MB)
+│   └── scaler.joblib           # Objek MinMaxScaler yang telah disesuaikan
 ├── reports/
-│   ├── benchmark_results.json  # Comprehensive scenario benchmark data
-│   ├── training_metrics.json   # Training performance, confusion matrix, metrics
-│   └── ips_blocked_events.json # Real-time firewall drop event logs
+│   ├── benchmark_results.json  # Data kuantitatif hasil pengujian tiga skenario
+│   ├── training_metrics.json   # Metrik pelatihan, matriks konfusi, dan klasifikasi
+│   └── ips_blocked_events.json # Log riwayat pemblokiran IP penyerang secara real-time
 ├── scripts/
-│   ├── train_model.py          # Training pipeline on official CSE-CIC-IDS2018
-│   ├── ips_engine.py           # Real-time packet sniffer & iptables mitigation daemon
-│   └── simulate_attacks.py     # Benchmark simulation & verification suite
-├── MODEL_CARD.md               # International-standard ML model documentation
-├── requirements.txt            # Python dependencies
-├── LICENSE                     # MIT License
-└── README.md                   # Project documentation
+│   ├── train_model.py          # Script pelatihan model pada dataset resmi CSE-CIC-IDS2018
+│   ├── ips_engine.py           # Engine penangkap paket & pemblokir otomatis via iptables
+│   └── simulate_attacks.py     # Script simulasi pengujian dan verifikasi performa
+├── MODEL_CARD.md               # Dokumentasi teknis Machine Learning berstandar internasional
+├── requirements.txt            # Dependensi pustaka Python
+├── LICENSE                     # Lisensi perangkat lunak (MIT License)
+└── README.md                   # Dokumentasi utama proyek (Bahasa Indonesia)
 ```
 
 ---
 
-## 🚀 Quick Start Guide
+## 🚀 Panduan Memulai Cepat (Quick Start)
 
-### 1. Prerequisites & Installation
+### 1. Kebutuhan Sistem & Instalasi
 
-Clone the repository and install the dependencies:
+Kloning repositori ini dan pasang dependensi Python yang dibutuhkan:
 
 ```bash
 git clone https://github.com/BOCIL21/IPS_Machine_Learning_Project.git
@@ -138,26 +138,27 @@ cd IPS_Machine_Learning_Project
 pip install -r requirements.txt
 ```
 
-On Ubuntu/Debian gateways, ensure packet capture and firewall tools are present:
+Pada mesin Linux (Gateway), pastikan paket penangkap paket dan firewall telah terpasang:
 ```bash
 sudo apt-get update && sudo apt-get install -y iptables libpcap-dev tcpdump
 ```
 
-### 2. Train the Model
+### 2. Melatih Ulang Model (Opsional)
 
-Train the Random Forest model on the official CSE-CIC-IDS2018 dataset:
+Jika ingin melatih ulang model menggunakan dataset CSE-CIC-IDS2018:
 ```bash
 python scripts/train_model.py
 ```
-*Note: Dataset CSV files (`02-15-2018.csv`, `02-21-2018.csv`, `02-28-2018.csv`) should be placed in the `data/` directory.*
+*(Catatan: File CSV dataset `02-15-2018.csv`, `02-21-2018.csv`, dan `02-28-2018.csv` diletakkan pada folder `data/`)*.
 
-### 3. Start the Live IPS Engine
+### 3. Menjalankan Engine IPS Real-Time
 
-Run the active IPS engine with administrator/root privileges on the gateway's external interface:
+Jalankan engine pencegah serangan dengan hak akses administrator/root pada antarmuka jaringan yang memantau penyerang:
 ```bash
 sudo python3 scripts/ips_engine.py --interface eth0
 ```
-When anomalous traffic is detected, `ips_engine.py` will print:
+
+Saat serangan terdeteksi, terminal Gateway akan menampilkan log mitigasi:
 ```
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 [!] [ACTION MITIGASI] SERANGAN TERDETEKSI!
@@ -167,23 +168,23 @@ When anomalous traffic is detected, `ips_engine.py` will print:
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ```
 
-### 4. Run Benchmark & Verification Suite
+### 4. Menjalankan Uji Benchmark & Simulasi Serangan
 
-Validate system performance against simulated normal and malicious scenarios:
+Untuk memvalidasi keakuratan sistem terhadap pengujian trafik normal dan serangan:
 ```bash
 python scripts/simulate_attacks.py
 ```
 
 ---
 
-## 📜 Citation & References
+## 📜 Sitasi & Referensi Ilmiah
 
-1. **Dataset Source:** Canadian Institute for Cybersecurity (CIC) & Communications Security Establishment (CSE). *CSE-CIC-IDS2018 Dataset on AWS Open Data Registry*. [https://www.unb.ca/cic/datasets/ids-2018.html](https://www.unb.ca/cic/datasets/ids-2018.html)
-2. **Model Reporting Standard:** Mitchell, M., et al. (2019). *Model Cards for Model Reporting*. In Proceedings of the Conference on Fairness, Accountability, and Transparency (FAT* '19), pp. 220–229. [https://doi.org/10.1145/3287560.3287596](https://doi.org/10.1145/3287560.3287596)
-3. **Core Tooling:** Pedregosa, F., et al. (2011). *Scikit-learn: Machine Learning in Python*. JMLR 12, pp. 2825-2830.
+1. **Sumber Dataset:** Canadian Institute for Cybersecurity (CIC) & Communications Security Establishment (CSE). *CSE-CIC-IDS2018 Dataset on AWS Open Data Registry*. [https://www.unb.ca/cic/datasets/ids-2018.html](https://www.unb.ca/cic/datasets/ids-2018.html)
+2. **Standar Dokumentasi Model:** Mitchell, M., et al. (2019). *Model Cards for Model Reporting*. In Proceedings of the Conference on Fairness, Accountability, and Transparency (FAT* '19), pp. 220–229. [https://doi.org/10.1145/3287560.3287596](https://doi.org/10.1145/3287560.3287596)
+3. **Pustaka Utama:** Pedregosa, F., et al. (2011). *Scikit-learn: Machine Learning in Python*. JMLR 12, pp. 2825-2830.
 
 ---
 
-## 📄 License
+## 📄 Lisensi
 
-This project is licensed under the [MIT License](LICENSE).
+Proyek ini dilisensikan di bawah lisensi terbuka [MIT License](LICENSE).

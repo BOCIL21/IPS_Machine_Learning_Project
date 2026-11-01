@@ -1,10 +1,10 @@
 """
 File: ips_engine.py
 Deskripsi: Engine IPS Real-Time yang beroperasi di Gateway Linux.
-           Menangkap paket jaringan, menghitung fitur statistik aliran,
-           memprediksi anomali dengan ML (Random Forest), dan otomatis memblokir
-           IP penyerang menggunakan perintah iptables di kernel Linux.
-Penggunaan: sudo python3 ips_engine.py --interface eth0
+           Menangkap paket jaringan, merekonstruksi statistik aliran 5-tuple,
+           memprediksi anomali dengan model ML (Random Forest), dan memicu
+           pemblokiran otomatis alamat IP penyerang menggunakan kernel iptables.
+Penggunaan: sudo python3 ips_engine.py --interface eth0 --threshold 0.80 --whitelist 192.168.10.1,192.168.20.1
 """
 
 import os
@@ -15,7 +15,6 @@ import argparse
 import numpy as np
 import joblib
 
-# Optional scapy import for environments without libpcap
 try:
     from scapy.all import sniff, IP, TCP, UDP
     SCAPY_AVAILABLE = True
@@ -23,12 +22,15 @@ except ImportError:
     SCAPY_AVAILABLE = False
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "..", "models", "model_ips_rf.joblib")
-SCALER_PATH = os.path.join(BASE_DIR, "..", "models", "scaler.joblib")
-LOG_DIR = os.path.join(BASE_DIR, "..", "reports")
+PROJECT_DIR = os.path.abspath(os.path.join(BASE_DIR, ".."))
+MODEL_PATH = os.path.join(PROJECT_DIR, "models", "model_ips_rf.joblib")
+SCALER_PATH = os.path.join(PROJECT_DIR, "models", "scaler.joblib")
+LOG_DIR = os.path.join(PROJECT_DIR, "reports")
 
 FLOW_CACHE = {}
 BLOCKED_IPS = set()
+DEFAULT_WHITELIST = {"127.0.0.1", "192.168.10.1", "192.168.20.1", "8.8.8.8", "1.1.1.1"}
+WHITELISTED_IPS = set(DEFAULT_WHITELIST)
 ATTACK_EVENTS = []
 FLOW_TIMEOUT = 5.0
 
@@ -90,7 +92,7 @@ class FlowStatistics:
         flow_iat_mean = float(np.mean(iats))
         fwd_iat_tot = duration
 
-        # Urutan 15 Fitur Standar
+        # Urutan 15 Fitur Standar CICFlowMeter
         feature_vector = np.array([
             self.dst_port,
             duration * 1e6,
@@ -111,11 +113,15 @@ class FlowStatistics:
 
         return feature_vector.reshape(1, -1)
 
-def block_ip_iptables(attacker_ip, attack_type="Anomali Aliran"):
+def block_ip_iptables(attacker_ip, attack_type="Anomali Aliran", dry_run=False, proba=1.0):
     """
     Eksekusi Mitigasi Aktif:
     Menyuntikkan aturan pemblokiran ke kernel firewall Linux (iptables)
     """
+    if attacker_ip in WHITELISTED_IPS:
+        print(f"[*] [WHITELIST] Alamat IP {attacker_ip} dilewati dari pemblokiran (Trusted IP).")
+        return 0.0
+
     if attacker_ip in BLOCKED_IPS:
         return 0.0
 
@@ -125,45 +131,48 @@ def block_ip_iptables(attacker_ip, attack_type="Anomali Aliran"):
     cmd_forward = f"iptables -I FORWARD -s {attacker_ip} -j DROP"
     cmd_input = f"iptables -I INPUT -s {attacker_ip} -j DROP"
     
-    # Eksekusi sistem
-    if os.name != 'nt':
+    # Eksekusi sistem jika bukan dry-run dan berjalan di Linux
+    if not dry_run and os.name != 'nt':
         os.system(cmd_forward)
         os.system(cmd_input)
     
     injection_latency_ms = (time.time() - t_start) * 1000
     
     event = {
-        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S.000Z"),
         "attacker_ip": attacker_ip,
         "attack_type": attack_type,
+        "probability": round(float(proba), 4),
         "rule_executed": cmd_forward,
-        "injection_latency_ms": round(injection_latency_ms, 3)
+        "injection_latency_ms": round(injection_latency_ms, 3),
+        "status": "SIMULATED_BLOCK" if dry_run else "BLOCKED"
     }
     ATTACK_EVENTS.append(event)
     
-    print("\n" + "!"*60)
+    print("\n" + "!"*65)
     print(f"[!] [ACTION MITIGASI] SERANGAN TERDETEKSI!")
     print(f"[!] IP Penyerang Diblokir : {attacker_ip}")
-    print(f"[!] Jenis Anomali          : {attack_type}")
+    print(f"[!] Jenis Anomali          : {attack_type} (Keyakinan ML: {proba*100:.1f}%)")
     print(f"[!] Eksekusi Firewall Rule : {cmd_forward}")
     print(f"[!] Waktu Injeksi Aturan   : {injection_latency_ms:.2f} ms")
-    print("!"*60 + "\n")
+    if dry_run:
+        print("[!] [MODE SIMULASI] Aturan tidak benar-benar dieksekusi di kernel (--dry-run).")
+    print("!"*65 + "\n")
 
-    # Simpan event log
     os.makedirs(LOG_DIR, exist_ok=True)
     with open(os.path.join(LOG_DIR, "ips_blocked_events.json"), "w") as f:
         json.dump(ATTACK_EVENTS, f, indent=4)
         
     return injection_latency_ms
 
-def process_packet(packet, model, scaler):
+def process_packet(packet, model, scaler, threshold=0.50, dry_run=False):
     if not packet.haslayer(IP):
         return
 
     src_ip = packet[IP].src
     dst_ip = packet[IP].dst
 
-    if src_ip in BLOCKED_IPS:
+    if src_ip in BLOCKED_IPS or src_ip in WHITELISTED_IPS:
         return
 
     proto = packet[IP].proto
@@ -193,42 +202,58 @@ def process_packet(packet, model, scaler):
         flow.update(packet, direction="FWD")
         FLOW_CACHE[flow_key] = flow
 
+    # Ekstraksi setelah aliran memiliki minimal 5 paket
     if (flow.tot_fwd_pkts + flow.tot_bwd_pkts) >= 5:
         features = flow.extract_features()
         scaled_features = scaler.transform(features)
         
         t0 = time.time()
-        prediction = model.predict(scaled_features)[0]
+        # Menggunakan predict_proba untuk threshold tuning
+        proba_attack = model.predict_proba(scaled_features)[0][1]
         infer_time = (time.time() - t0) * 1000
 
-        if prediction == 1:
-            print(f"[*] Alert: Aliran anomali terdeteksi dari {src_ip} -> {dst_ip}:{dst_port} (Inferensi ML: {infer_time:.2f} ms)")
-            block_ip_iptables(src_ip, attack_type="DoS / PortScan Flooding")
+        if proba_attack >= threshold:
+            print(f"[*] Alert: Aliran anomali terdeteksi dari {src_ip} -> {dst_ip}:{dst_port} (Probabilitas: {proba_attack:.3f}, Inferensi ML: {infer_time:.2f} ms)")
+            block_ip_iptables(src_ip, attack_type="DoS / PortScan Flooding", dry_run=dry_run, proba=proba_attack)
             FLOW_CACHE.pop(flow_key, None)
 
 def main():
-    parser = argparse.ArgumentParser(description="IPS Engine Berbasis Machine Learning")
-    parser.add_argument("--interface", default="eth0", help="Antarmuka jaringan yang dipantau (misal: eth0 / enp0s3)")
+    parser = argparse.ArgumentParser(description="Engine IPS Berbasis Machine Learning In-Line")
+    parser.add_argument("--interface", default="eth0", help="Antarmuka jaringan yang dipantau (misal: eth0 / ens33)")
+    parser.add_argument("--threshold", type=float, default=0.50, help="Ambang batas probabilitas deteksi (default: 0.50, rekomendasi produksi: 0.80)")
+    parser.add_argument("--whitelist", type=str, default="", help="Daftar IP yang dikecualikan dari blokir, pisahkan dengan koma")
+    parser.add_argument("--dry-run", action="store_true", help="Jalankan dalam mode simulasi tanpa mengubah tabel iptables")
     args = parser.parse_args()
 
-    if os.name != 'nt' and os.geteuid() != 0:
+    if os.name != 'nt' and os.geteuid() != 0 and not args.dry_run:
         sys.exit("[!] Error: Script IPS harus dijalankan dengan hak akses root (sudo).")
 
-    print("[*] Memuat model Random Forest dan Scaler...")
+    if args.whitelist:
+        for ip in args.whitelist.split(","):
+            if ip.strip():
+                WHITELISTED_IPS.add(ip.strip())
+
+    print("="*65)
+    print("  ENGINE IPS BERBASIS MACHINE LEARNING (REACTIVE KERNEL MITIGATION)")
+    print("="*65)
+    print(f"[*] Antarmuka Dipantau    : {args.interface}")
+    print(f"[*] Ambang Batas Deteksi  : {args.threshold * 100:.1f}%")
+    print(f"[*] Mode Dry-Run          : {'AKTIF (Simulasi)' if args.dry_run else 'TIDAK (Live Kernel Drop)'}")
+    print(f"[*] Daftar IP Whitelist   : {', '.join(sorted(WHITELISTED_IPS))}")
+
     if not os.path.exists(MODEL_PATH) or not os.path.exists(SCALER_PATH):
         sys.exit(f"[!] Error: File model tidak ditemukan di {MODEL_PATH}. Jalankan train_model.py terlebih dahulu.")
 
     model = joblib.load(MODEL_PATH)
     scaler = joblib.load(SCALER_PATH)
-    print("[+] Model dan Scaler berhasil dimuat.")
-    print(f"[*] Memulai Packet Sniffing pada antarmuka: {args.interface}...")
-    print("[*] Status: IPS Engine AKTIF dan siap memitigasi serangan.\n")
+    print("[+] Model Random Forest dan Scaler berhasil dimuat.")
+    print("[*] Status: IPS Engine AKTIF dan siap memantau lalu lintas.\n")
 
-    if os.name != 'nt':
+    if not args.dry_run and os.name != 'nt':
         os.system("iptables -F FORWARD")
 
     try:
-        sniff(iface=args.interface, prn=lambda pkt: process_packet(pkt, model, scaler), store=False)
+        sniff(iface=args.interface, prn=lambda pkt: process_packet(pkt, model, scaler, threshold=args.threshold, dry_run=args.dry_run), store=False)
     except KeyboardInterrupt:
         print("\n[*] Menghentikan IPS Engine...")
         print(f"[*] Total IP yang telah diblokir selama sesi ini: {len(BLOCKED_IPS)}")

@@ -15,6 +15,7 @@ Mengikuti standar pelaporan dokumentasi model machine learning internasional yan
 * **Output Klasifikasi:** Klasifikasi Biner (*Binary Classification*):
   * `0`: Normal / Benign (Lalu lintas pengguna sah — HTTP/HTTPS, DNS, SSH normal)
   * `1`: Anomali / Serangan (Banjir DoS/DDoS, Pemindaian Port, Infiltrasi)
+* **Mode Operasional:** *Near-Real-Time Reactive IPS* (Penangkapan paket user-space via Scapy dan mitigasi pencegahan aktif di kernel firewall via Linux Netfilter/iptables).
 * **Lisensi:** MIT License
 * **Framework & Bahasa:** Python 3.12+, Scikit-Learn 1.4+, Joblib 1.3+
 
@@ -23,14 +24,15 @@ Mengikuti standar pelaporan dokumentasi model machine learning internasional yan
 ## 2. Cakupan Penggunaan & Batasan (*Intended Use & Limitations*)
 
 ### Penggunaan Utama yang Ditujukan
-* Mendeteksi ancaman perimeter jaringan secara *real-time* dan mengeksekusi mitigasi aktif tanpa campur tangan manusia.
-* Dioperasikan langsung pada mesin Gateway Linux dengan topologi Dual-NIC (in-line mode).
+* Mendeteksi ancaman perimeter jaringan secara *near-real-time* dan mengeksekusi mitigasi aktif tanpa campur tangan manusia.
+* Dioperasikan langsung pada mesin Gateway Linux dengan topologi Dual-NIC (`VMnet1` WAN & `VMnet2` LAN).
 * Terintegrasi langsung dengan kernel firewall Linux (**iptables/Netfilter**) untuk membuang paket (*DROP*) dari alamat IP sumber penyerang secara instan.
 
 ### Batasan Teknis & Di Luar Cakupan (*Out-of-Scope*)
 * **Inspeksi Muatan Aplikasi Mendalam (*Deep Packet Inspection* / DPI):** Model ini mengevaluasi statistik metadata aliran (Layer 3 dan Layer 4) dan tidak memeriksa muatan teks L7 (seperti payload SQL Injection atau Cross-Site Scripting).
-* **Pemindaian Sangat Lambat (*Slow Stealth Scans*):** Pemindaian port terdistribusi yang tersebar dalam hitungan jam atau hari dapat melewati jendela waktu kedaluwarsa aliran (*flow cache timeout* 5 detik).
+* **Pemindaian Port Tersebar Sangat Lambat (*Low-and-Slow Stealth Scans*):** Pemindaian port terdistribusi yang tersebar dalam hitungan jam atau hari dapat melewati jendela waktu kedaluwarsa aliran (*flow cache timeout* 5 detik).
 * **Trafik Terowongan Terenkripsi (*Encrypted Tunnels*):** Aliran VPN atau Tor akan dievaluasi berdasarkan karakteristik aliran terowongan pembungkus (*outer tunnel flow*), bukan paket individual di dalamnya.
+* **Keterbatasan Reactive Sniffing:** Paket pertama selama jendela ekstraksi aliran (minimal 5 paket) tetap akan melewati gateway sebelum model memprediksi anomali dan menginjeksi aturan blokir. Rencana pengembangan lanjutan akan memigrasikan sistem ke modul **`NetfilterQueue` (`NFQUEUE`)** atau **eBPF/XDP** untuk mencapai *True Zero-Copy In-Line Packet Modification*.
 
 ---
 
@@ -45,13 +47,13 @@ Mengikuti standar pelaporan dokumentasi model machine learning internasional yan
   * `02-28-2018.csv`: Rekonaisans & Infiltrasi (*Port Scanning*).
 
 ### B. Pipeline Preprocessing & Pembersihan Data
-1. **Pembersihan Data:** Menghapus duplikasi header baris, membersihkan nilai tak terhingga (`np.inf` dan `-np.inf`), serta menghapus sampel dengan data kosong (*missing values* / `NaN`).
-2. **Penyampelan Bertingkat (*Stratified Sampling*):** Mengambil 210.000 sampel aliran seimbang (105.000 sampel serangan dan 105.000 sampel normal).
+1. **Pembersihan Data:** Menghapus duplikasi header baris, membersihkan nilai tak terhingga (`np.inf` dan `-np.inf`), menormalkan nilai negatif pada laju aliran, serta menghapus sampel dengan data kosong (*missing values* / `NaN`).
+2. **Penyampelan Bertingkat (*Stratified Sampling*):** Mengambil 210.000 sampel aliran seimbang (105.000 sampel serangan dan 105.000 sampel normal) dari ketiga berkas untuk mencegah bias mayoritas kelas.
 3. **Pembagian Data (*Data Split*):**
    * **Data Latih (*Training Set*):** 70% (147.000 sampel)
    * **Data Validasi (*Validation Set*):** 15% (31.500 sampel)
    * **Data Uji Independen (*Hold-Out Test Set*):** 15% (31.500 sampel)
-4. **Normalisasi Fitur:** Menggunakan `MinMaxScaler()` yang dipaskan (*fitted*) hanya pada data latih dan disimpan ke `scaler.joblib` guna mencegah kebocoran data (*data leakage*).
+4. **Normalisasi Fitur:** Menggunakan `MinMaxScaler()` yang dipaskan (*fitted*) hanya pada data latih dan disimpan ke `models/scaler.joblib` guna mencegah kebocoran data (*data leakage*).
 
 ---
 
@@ -79,8 +81,12 @@ Mengikuti standar pelaporan dokumentasi model machine learning internasional yan
 | **Presisi (*Precision*) Deteksi Serangan** | **90.39%** | $\ge 85.0\%$ | **Terlampaui** |
 | **Sensitivitas / Recall** | **77.98%** | $\ge 75.0\%$ | **Terlampaui** |
 | **F1-Score** | **83.73%** | $\ge 80.0\%$ | **Terlampaui** |
+| **False Positive Rate (FPR)** | **8.29%** (Uji Acak) / **4.00%** (Browsing Riil) | $\le 10.0\%$ | **Terkendali** |
+| **False Negative Rate (FNR)** | **22.02%** | $\le 25.0\%$ | **Terkendali** |
+| **Area Under ROC Curve (ROC-AUC)** | **0.887** | $\ge 0.850$ | **Optimal** |
+| **Matthews Correlation Coefficient (MCC)** | **0.702** | $\ge 0.650$ | **Kuat** |
 | **Latensi Inferensi Batch (Per aliran)** | **0.0021 ms** | $< 5.000\text{ ms}$ | **2.380x Lebih Cepat** |
-| **Latensi Inferensi Live Stream (Scapy)** | **17.76 ms** | $< 30.000\text{ ms}$ | **Optimal** |
+| **Latensi Inferensi Live Stream (Scapy)** | **17.65 ms – 17.82 ms** | $< 30.000\text{ ms}$ | **Optimal** |
 | **Latensi Injeksi Aturan Firewall** | **1.85 ms** | $< 10.000\text{ ms}$ | **Sangat Cepat** |
 
 ### B. Matriks Konfusi (*Confusion Matrix*)
@@ -92,8 +98,9 @@ $$\begin{array}{c|cc}
 \textbf{Aktual Serangan} & 3.468\text{ (False Negative)} & 12.282\text{ (True Positive)} \\
 \end{array}$$
 
-* **Tingkat Deteksi Benar (*True Positive Rate*):** $77.98\%$
-* **Tingkat Alarm Palsu (*False Alarm Rate*):** $8.29\%$ pada uji gabungan acak, dan turun menjadi **$4.00\%$** pada pengujian operasional browsing normal.
+### C. Analisis Keterbatasan & Karakteristik Skenario
+1. **Recall Sempurna pada Serangan Volumetrik (100%):** Pada serangan DoS/DDoS (GoldenEye, Slowloris, HOIC), model mencapai tingkat deteksi $100\%$ tanpa ada serangan yang terlewat karena perbedaan tajam pada laju paket (`Flow Pkts/s`) dan panjang muatan payload.
+2. **Karakteristik Serangan Infiltrasi (36.33% Deteksi):** Pada berkas `02-28-2018.csv`, aktivitas *Infiltration* dirancang meniru lalu lintas komunikasi pengguna internal normal. Tanpa inspeksi payload L7, pemindaian port berbasis koneksi lambat memiliki kesamaan statistik transport dengan sesi jaringan sah, sehingga menyumbang porsi terbesar pada *False Negative*.
 
 ---
 
@@ -128,6 +135,7 @@ Tingkat kepentingan fitur dihitung berdasarkan penurunan *Gini Impurity* pada se
 * **Penggunaan Memori RAM Saat Operasional:** `~85 MB` (mencakup runtime Python, Scapy flow cache table, dan struktur memori scikit-learn).
 * **Perintah Firewall yang Dieksekusi:** `iptables -I FORWARD -s <IP> -j DROP`
 * **Rata-rata Waktu Injeksi Rule:** `1.85 milidetik` (dari output klasifikasi model hingga aturan aktif di kernel Linux).
+* **Mitigasi Table Bloating & Self-DoS:** Dilengkapi dengan fitur **IP Whitelisting** (`--whitelist`) dan rekomendasi penggunaan modul **`ipset`** untuk menangani pemblokiran puluhan ribu IP secara $O(1)$.
 
 ---
 

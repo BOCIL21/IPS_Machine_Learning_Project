@@ -1,0 +1,56 @@
+[
+    {
+        "flow_batch_size": 100,
+        "total_execution_time_sec": 1.572,
+        "throughput_flows_per_sec": 63.6,
+        "latency_p50_ms": 14.743,
+        "latency_p90_ms": 16.844,
+        "latency_p95_ms": 18.19,
+        "latency_p99_ms": 32.866
+    },
+    {
+        "flow_batch_size": 500,
+        "total_execution_time_sec": 7.62,
+        "throughput_flows_per_sec": 65.6,
+        "latency_p50_ms": 14.531,
+        "latency_p90_ms": 16.169,
+        "latency_p95_ms": 18.171,
+        "latency_p99_ms": 28.796
+    },
+    {
+        "flow_batch_size": 1000,
+        "total_execution_time_sec": 14.945,
+        "throughput_flows_per_sec": 66.9,
+        "latency_p50_ms": 14.538,
+        "latency_p90_ms": 15.871,
+        "latency_p95_ms": 16.393,
+        "latency_p99_ms": 26.543
+    },
+    {
+        "flow_batch_size": 2500,
+        "total_execution_time_sec": 37.448,
+        "throughput_flows_per_sec": 66.8,
+        "latency_p50_ms": 14.562,
+        "latency_p90_ms": 15.903,
+        "latency_p95_ms": 16.601,
+        "latency_p99_ms": 26.051
+    },
+    {
+        "flow_batch_size": 5000,
+        "total_execution_time_sec": 74.647,
+        "throughput_flows_per_sec": 67.0,
+        "latency_p50_ms": 14.569,
+        "latency_p90_ms": 15.772,
+        "latency_p95_ms": 16.42,
+        "latency_p99_ms": 26.315
+    },
+    {
+        "flow_batch_size": 10000,
+        "total_execution_time_sec": 150.119,
+        "throughput_flows_per_sec": 66.6,
+        "latency_p50_ms": 14.576,
+        "latency_p90_ms": 15.895,
+        "latency_p95_ms": 16.63,
+        "latency_p99_ms": 26.687
+    }
+]

@@ -1,0 +1,38 @@
+[
+    {
+        "rules_count": 10,
+        "avg_injection_latency_ms": 1.687,
+        "estimated_packet_filtering_delay_us": 4.5,
+        "recommended_alternative": "ipset (O(1) Hash Table) jika rules > 500"
+    },
+    {
+        "rules_count": 50,
+        "avg_injection_latency_ms": 1.796,
+        "estimated_packet_filtering_delay_us": 22.5,
+        "recommended_alternative": "ipset (O(1) Hash Table) jika rules > 500"
+    },
+    {
+        "rules_count": 100,
+        "avg_injection_latency_ms": 1.784,
+        "estimated_packet_filtering_delay_us": 45.0,
+        "recommended_alternative": "ipset (O(1) Hash Table) jika rules > 500"
+    },
+    {
+        "rules_count": 250,
+        "avg_injection_latency_ms": 2.092,
+        "estimated_packet_filtering_delay_us": 112.5,
+        "recommended_alternative": "ipset (O(1) Hash Table) jika rules > 500"
+    },
+    {
+        "rules_count": 500,
+        "avg_injection_latency_ms": 2.619,
+        "estimated_packet_filtering_delay_us": 225.0,
+        "recommended_alternative": "ipset (O(1) Hash Table) jika rules > 500"
+    },
+    {
+        "rules_count": 1000,
+        "avg_injection_latency_ms": 3.394,
+        "estimated_packet_filtering_delay_us": 450.0,
+        "recommended_alternative": "ipset (O(1) Hash Table) jika rules > 500"
+    }
+]

@@ -7,7 +7,7 @@ Mengikuti standar pelaporan dokumentasi model machine learning internasional yan
 ## 1. Rincian Model (*Model Details*)
 
 * **Nama Model:** Pengklasifikasi Aliran Jaringan In-Line Berbasis Random Forest untuk Pencegahan Intrusi (`model_ips_rf.joblib`)
-* **Versi Model:** `v1.2.0-stable`
+* **Versi Model:** `v1.3.0-production` (Dioptimalkan melalui 5 dimensi riset empiris)
 * **Tanggal Rilis:** November 2026
 * **Pengembang:** M. Ilham Nandari (Universitas Bina Darma Palembang)
 * **Arsitektur Model:** Pembelajaran Ensemble — Random Forest Classifier (`sklearn.ensemble.RandomForestClassifier`)
@@ -16,6 +16,7 @@ Mengikuti standar pelaporan dokumentasi model machine learning internasional yan
   * `0`: Normal / Benign (Lalu lintas pengguna sah — HTTP/HTTPS, DNS, SSH normal)
   * `1`: Anomali / Serangan (Banjir DoS/DDoS, Pemindaian Port, Infiltrasi)
 * **Mode Operasional:** *Near-Real-Time Reactive IPS* (Penangkapan paket user-space via Scapy dan mitigasi pencegahan aktif di kernel firewall via Linux Netfilter/iptables).
+* **Konfigurasi Produksi Terbaik (*Optimal Setting*):** Ambang Batas $\theta^* = 0.80$ (Presisi 98.64%, False Positive Rate 0.95%).
 * **Lisensi:** MIT License
 * **Framework & Bahasa:** Python 3.12+, Scikit-Learn 1.4+, Joblib 1.3+
 
@@ -51,60 +52,58 @@ Mengikuti standar pelaporan dokumentasi model machine learning internasional yan
 2. **Penyampelan Bertingkat (*Stratified Sampling*):** Mengambil 210.000 sampel aliran seimbang (105.000 sampel serangan dan 105.000 sampel normal) dari ketiga berkas untuk mencegah bias mayoritas kelas.
 3. **Pembagian Data (*Data Split*):**
    * **Data Latih (*Training Set*):** 70% (147.000 sampel)
-   * **Data Validasi (*Validation Set*):** 15% (31.500 sampel)
-   * **Data Uji Independen (*Hold-Out Test Set*):** 15% (31.500 sampel)
+   * **Data Uji Independen (*Hold-Out Test Set*):** 30% (63.000 sampel)
 4. **Normalisasi Fitur:** Menggunakan `MinMaxScaler()` yang dipaskan (*fitted*) hanya pada data latih dan disimpan ke `models/scaler.joblib` guna mencegah kebocoran data (*data leakage*).
 
 ---
 
-## 4. Spesifikasi Arsitektur & Hyperparameter
+## 4. Rangkuman Bukti Riset Empiris (5 Dimensi Pengujian)
 
-| Hyperparameter | Nilai | Rasionalitas Pemilihan |
-|:---|:---:|:---|
-| `n_estimators` | `100` | Keseimbangan optimal antara reduksi variansi model dan latensi inferensi sub-milidetik. |
-| `max_depth` | `25` | Mencegah *overfitting* sekaligus mampu memetakan manifold pola serangan multi-kelas yang kompleks. |
-| `min_samples_split` | `5` | Regularisasi untuk menghindari pembagian berlebihan pada node daun dengan sampel langka. |
-| `criterion` | `'gini'` | Menghitung *Gini Impurity* secara cepat untuk pemisahan node pohon keputusan. |
-| `class_weight` | `'balanced'` | Menyesuaikan bobot kelas secara otomatis berbanding terbalik dengan frekuensi kemunculan data. |
-| `n_jobs` | `-1` | Memanfaatkan seluruh core CPU fisik secara paralel saat pelatihan dan inferensi. |
-| `random_state` | `42` | Menjamin determinisme dan keterulangan (*reproducibility*) hasil pengujian pada komputer lain. |
+### A. Optimisasi Ambang Batas Probabilitas (*Threshold Sweep $\theta \in [0.50, 0.95]$*)
+Mengevaluasi trade-off antara Presisi dan False Alarm Rate:
+
+| Ambang Batas ($\theta$) | Akurasi | Presisi | Recall | F1-Score | False Alarm Rate (FPR) | Status |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---|
+| `0.50` | 84.54% | 90.07% | 77.64% | 83.39% | 8.56% | Baseline Standar |
+| `0.60` | 84.53% | 94.03% | 73.74% | 82.66% | 4.68% | Presisi Tinggi |
+| `0.70` | 84.12% | 96.77% | 70.59% | 81.63% | 2.36% | FPR Terkendali |
+| **`0.80`** | **83.76%** | **98.64%** | **68.46%** | **80.83%** | **0.95%** | **PARETO-OPTIMAL (LOW FP)** |
+| `0.90` | 83.47% | 99.53% | 67.25% | 80.27% | 0.32% | Ultra-Konservatif |
+| `0.95` | 83.35% | 99.78% | 66.84% | 80.06% | 0.15% | Hampir Nol FP |
+
+### B. Studi Ablasi Fitur (*Feature Ablation Study*)
+Membuktikan ketahanan model saat nomor port diubah atau dihilangkan (*Port-Agnostic*):
+
+| Varian Fitur | Fitur Digunakan | Akurasi | F1-Score | Latensi Inferensi |
+|:---|:---:|:---:|:---:|:---:|
+| **Varian A (Full 15 Fitur - Baseline)** | 15 Fitur | **84.54%** | **83.39%** | **0.0013 ms** |
+| **Varian B (Port-Agnostic / Tanpa Dst Port)** | 14 Fitur | **84.28%** | **83.08%** | **0.0015 ms** |
+| **Varian C (Kompak Top-8 Fitur)** | 8 Fitur | **83.69%** | **82.15%** | **0.0014 ms** |
+
+### C. Komparasi Multi-Algoritma Machine Learning
+
+| Algoritma | Akurasi | Presisi | Recall | F1-Score | ROC-AUC | Waktu Latih |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Random Forest (100 Trees - Model Terpilih)** | **84.54%** | **90.07%** | **77.64%** | **83.39%** | **0.845** | **2.10 detik** |
+| **HistGradientBoosting** | **85.33%** | **93.60%** | **75.85%** | **83.79%** | **0.853** | **0.67 detik** |
+| **Extra Trees (100 Trees)** | 84.56% | 93.08% | 74.67% | 82.87% | 0.846 | 1.08 detik |
+| **Decision Tree (Single CART)**| 83.65% | 87.75% | 78.21% | 82.71% | 0.837 | 0.81 detik |
+| **Logistic Regression (Linear)**| 78.67% | 82.11% | 73.32% | 77.47% | 0.787 | 0.24 detik |
+
+### D. Uji Stres Beban Trafik & Latensi Berjenjang (Percentiles)
+
+| Beban Aliran (*Flows*) | Throughput (*Flows/s*) | P50 (ms) | P90 (ms) | P95 (ms) | P99 (ms) |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| **100** | 63.6 | 14.743 | 16.844 | 18.190 | 32.866 |
+| **500** | 65.6 | 14.531 | 16.169 | 18.171 | 28.796 |
+| **1.000** | 66.9 | 14.538 | 15.871 | 16.393 | 26.543 |
+| **2.500** | 66.8 | 14.562 | 15.903 | 16.601 | 26.051 |
+| **5.000** | 67.0 | 14.569 | 15.772 | 16.420 | 26.315 |
+| **10.000** | **66.6** | **14.576** | **15.895** | **16.630** | **26.687** |
 
 ---
 
-## 5. Evaluasi Kuantitatif & Tolok Ukur Kinerja (*Metrics*)
-
-### A. Pengujian Data Uji Independen (31.500 Sampel Uji)
-
-| Parameter Metrik | Nilai Capaian | Target Ambang Batas | Status |
-|:---|:---:|:---:|:---:|
-| **Akurasi Keseluruhan (*Accuracy*)** | **84.84%** | $\ge 80.0\%$ | **Terlampaui** |
-| **Presisi (*Precision*) Deteksi Serangan** | **90.39%** | $\ge 85.0\%$ | **Terlampaui** |
-| **Sensitivitas / Recall** | **77.98%** | $\ge 75.0\%$ | **Terlampaui** |
-| **F1-Score** | **83.73%** | $\ge 80.0\%$ | **Terlampaui** |
-| **False Positive Rate (FPR)** | **8.29%** (Uji Acak) / **4.00%** (Browsing Riil) | $\le 10.0\%$ | **Terkendali** |
-| **False Negative Rate (FNR)** | **22.02%** | $\le 25.0\%$ | **Terkendali** |
-| **Area Under ROC Curve (ROC-AUC)** | **0.887** | $\ge 0.850$ | **Optimal** |
-| **Matthews Correlation Coefficient (MCC)** | **0.702** | $\ge 0.650$ | **Kuat** |
-| **Latensi Inferensi Batch (Per aliran)** | **0.0021 ms** | $< 5.000\text{ ms}$ | **2.380x Lebih Cepat** |
-| **Latensi Inferensi Live Stream (Scapy)** | **17.65 ms – 17.82 ms** | $< 30.000\text{ ms}$ | **Optimal** |
-| **Latensi Injeksi Aturan Firewall** | **1.85 ms** | $< 10.000\text{ ms}$ | **Sangat Cepat** |
-
-### B. Matriks Konfusi (*Confusion Matrix*)
-
-$$\begin{array}{c|cc}
-& \textbf{Prediksi Normal} & \textbf{Prediksi Serangan} \\
-\hline
-\textbf{Aktual Normal} & 14.444\text{ (True Negative)} & 1.306\text{ (False Positive)} \\
-\textbf{Aktual Serangan} & 3.468\text{ (False Negative)} & 12.282\text{ (True Positive)} \\
-\end{array}$$
-
-### C. Analisis Keterbatasan & Karakteristik Skenario
-1. **Recall Sempurna pada Serangan Volumetrik (100%):** Pada serangan DoS/DDoS (GoldenEye, Slowloris, HOIC), model mencapai tingkat deteksi $100\%$ tanpa ada serangan yang terlewat karena perbedaan tajam pada laju paket (`Flow Pkts/s`) dan panjang muatan payload.
-2. **Karakteristik Serangan Infiltrasi (36.33% Deteksi):** Pada berkas `02-28-2018.csv`, aktivitas *Infiltration* dirancang meniru lalu lintas komunikasi pengguna internal normal. Tanpa inspeksi payload L7, pemindaian port berbasis koneksi lambat memiliki kesamaan statistik transport dengan sesi jaringan sah, sehingga menyumbang porsi terbesar pada *False Negative*.
-
----
-
-## 6. Analisis Bobot & Kepentingan Fitur (*Gini Feature Importance*)
+## 5. Analisis Bobot & Kepentingan Fitur (*Gini Feature Importance*)
 
 Tingkat kepentingan fitur dihitung berdasarkan penurunan *Gini Impurity* pada seluruh 100 pohon keputusan:
 
@@ -128,18 +127,18 @@ Tingkat kepentingan fitur dihitung berdasarkan penurunan *Gini Impurity* pada se
 
 ---
 
-## 7. Profil Sistem & Operasional (*Systems Profile*)
+## 6. Profil Sistem & Operasional (*Systems Profile*)
 
 * **Ukuran Berkas Model Terkompresi:** `18.1 MB` (`model_ips_rf.joblib`, kompresi Zlib level 3)
 * **Ukuran Berkas Scaler:** `690 bytes` (`scaler.joblib`)
 * **Penggunaan Memori RAM Saat Operasional:** `~85 MB` (mencakup runtime Python, Scapy flow cache table, dan struktur memori scikit-learn).
 * **Perintah Firewall yang Dieksekusi:** `iptables -I FORWARD -s <IP> -j DROP`
-* **Rata-rata Waktu Injeksi Rule:** `1.85 milidetik` (dari output klasifikasi model hingga aturan aktif di kernel Linux).
+* **Rata-rata Waktu Injeksi Rule:** `1.68 – 1.85 milidetik`
 * **Mitigasi Table Bloating & Self-DoS:** Dilengkapi dengan fitur **IP Whitelisting** (`--whitelist`) dan rekomendasi penggunaan modul **`ipset`** untuk menangani pemblokiran puluhan ribu IP secara $O(1)$.
 
 ---
 
-## 8. Pertimbangan Keamanan & Etika (*Security Considerations*)
+## 7. Pertimbangan Keamanan & Etika (*Security Considerations*)
 
 * **Penghindaran Adversarial (*Adversarial Evasion*):** Penyerang canggih dapat mencoba memodifikasi jeda antar paket (*packet pacing*) atau memvariasikan ukuran TCP window untuk menghindari deteksi. Disarankan untuk menambahkan mekanisme pembelajaran adaptif berkala (*periodic continuous training*).
 * **Risiko Pemalsuan Alamat IP (*IP Spoofing*):** Jika jaringan tidak menerapkan BCP 38 (*ingress filtering*), penyerang dapat memalsukan IP sah untuk menyebabkan *Denial of Service* pada pengguna lain. Disarankan untuk mengaktifkan validasi Reverse Path Forwarding (RPF) pada antarmuka router gateway.

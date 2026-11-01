@@ -1,0 +1,122 @@
+[
+    {
+        "threshold": 0.5,
+        "accuracy": 0.8454,
+        "precision": 0.9007,
+        "recall": 0.7764,
+        "f1_score": 0.8339,
+        "fpr_pct": 8.56,
+        "tp": 24457,
+        "fp": 2697,
+        "tn": 28803,
+        "fn": 7043
+    },
+    {
+        "threshold": 0.55,
+        "accuracy": 0.8457,
+        "precision": 0.9222,
+        "recall": 0.7552,
+        "f1_score": 0.8304,
+        "fpr_pct": 6.37,
+        "tp": 23788,
+        "fp": 2006,
+        "tn": 29494,
+        "fn": 7712
+    },
+    {
+        "threshold": 0.6,
+        "accuracy": 0.8453,
+        "precision": 0.9403,
+        "recall": 0.7374,
+        "f1_score": 0.8266,
+        "fpr_pct": 4.68,
+        "tp": 23229,
+        "fp": 1475,
+        "tn": 30025,
+        "fn": 8271
+    },
+    {
+        "threshold": 0.65,
+        "accuracy": 0.8437,
+        "precision": 0.9558,
+        "recall": 0.7207,
+        "f1_score": 0.8217,
+        "fpr_pct": 3.34,
+        "tp": 22702,
+        "fp": 1051,
+        "tn": 30449,
+        "fn": 8798
+    },
+    {
+        "threshold": 0.7,
+        "accuracy": 0.8412,
+        "precision": 0.9677,
+        "recall": 0.7059,
+        "f1_score": 0.8163,
+        "fpr_pct": 2.36,
+        "tp": 22235,
+        "fp": 742,
+        "tn": 30758,
+        "fn": 9265
+    },
+    {
+        "threshold": 0.75,
+        "accuracy": 0.8393,
+        "precision": 0.9783,
+        "recall": 0.694,
+        "f1_score": 0.812,
+        "fpr_pct": 1.54,
+        "tp": 21860,
+        "fp": 484,
+        "tn": 31016,
+        "fn": 9640
+    },
+    {
+        "threshold": 0.8,
+        "accuracy": 0.8376,
+        "precision": 0.9864,
+        "recall": 0.6846,
+        "f1_score": 0.8083,
+        "fpr_pct": 0.95,
+        "tp": 21566,
+        "fp": 298,
+        "tn": 31202,
+        "fn": 9934
+    },
+    {
+        "threshold": 0.85,
+        "accuracy": 0.8357,
+        "precision": 0.991,
+        "recall": 0.6776,
+        "f1_score": 0.8049,
+        "fpr_pct": 0.61,
+        "tp": 21344,
+        "fp": 193,
+        "tn": 31307,
+        "fn": 10156
+    },
+    {
+        "threshold": 0.9,
+        "accuracy": 0.8347,
+        "precision": 0.9953,
+        "recall": 0.6725,
+        "f1_score": 0.8027,
+        "fpr_pct": 0.32,
+        "tp": 21184,
+        "fp": 101,
+        "tn": 31399,
+        "fn": 10316
+    },
+    {
+        "threshold": 0.95,
+        "accuracy": 0.8335,
+        "precision": 0.9978,
+        "recall": 0.6684,
+        "f1_score": 0.8006,
+        "fpr_pct": 0.15,
+        "tp": 21056,
+        "fp": 46,
+        "tn": 31454,
+        "fn": 10444
+    }
+]

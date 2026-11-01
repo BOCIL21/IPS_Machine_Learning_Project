@@ -1,0 +1,52 @@
+{
+    "Random Forest (100 Trees - Model Terpilih)": {
+        "accuracy": 0.8454,
+        "precision": 0.9007,
+        "recall": 0.7764,
+        "f1_score": 0.8339,
+        "roc_auc": 0.8454,
+        "training_time_sec": 2.1,
+        "total_inference_time_ms": 82.59,
+        "per_sample_latency_ms": 0.00131
+    },
+    "Extra Trees (Extremely Randomized Trees)": {
+        "accuracy": 0.8456,
+        "precision": 0.9308,
+        "recall": 0.7467,
+        "f1_score": 0.8287,
+        "roc_auc": 0.8456,
+        "training_time_sec": 1.08,
+        "total_inference_time_ms": 77.65,
+        "per_sample_latency_ms": 0.00123
+    },
+    "HistGradientBoosting (Boosted Trees)": {
+        "accuracy": 0.8533,
+        "precision": 0.936,
+        "recall": 0.7585,
+        "f1_score": 0.8379,
+        "roc_auc": 0.8533,
+        "training_time_sec": 0.67,
+        "total_inference_time_ms": 61.01,
+        "per_sample_latency_ms": 0.00097
+    },
+    "Decision Tree (Single CART Baseline)": {
+        "accuracy": 0.8365,
+        "precision": 0.8775,
+        "recall": 0.7821,
+        "f1_score": 0.8271,
+        "roc_auc": 0.8365,
+        "training_time_sec": 0.81,
+        "total_inference_time_ms": 7.0,
+        "per_sample_latency_ms": 0.00011
+    },
+    "Logistic Regression (Linear Baseline)": {
+        "accuracy": 0.7867,
+        "precision": 0.8211,
+        "recall": 0.7332,
+        "f1_score": 0.7747,
+        "roc_auc": 0.7867,
+        "training_time_sec": 0.24,
+        "total_inference_time_ms": 1.0,
+        "per_sample_latency_ms": 2e-05
+    }
+}

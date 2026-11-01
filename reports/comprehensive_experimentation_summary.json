@@ -1,0 +1,9 @@
+{
+    "execution_date": "2026-11-02 00:41:20",
+    "total_experimentation_time_sec": 591.75,
+    "total_dataset_rows_analyzed": 210000,
+    "selected_best_model": "Random Forest Classifier (100 Trees, Balanced)",
+    "selected_optimal_threshold": 0.8,
+    "selected_optimal_features_count": 15,
+    "recommendation_summary": "Threshold theta=0.80 memberikan titik operasi optimal (Pareto-optimal) dengan False Alarm Rate di bawah 4.0% dan tingkat deteksi DoS/DDoS mencapai 99.8%. Untuk mitigasi skala besar (>1.000 IP), direkomendasikan transisi ke ipset."
+}

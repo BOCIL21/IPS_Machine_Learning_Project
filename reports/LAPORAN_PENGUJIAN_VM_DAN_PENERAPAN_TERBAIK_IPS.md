@@ -1,6 +1,7 @@
 # LAPORAN PENGUJIAN LINGKUNGAN VIRTUAL MACHINE (VM) DAN EVALUASI PENERAPAN TERBAIK IPS MACHINE LEARNING
 
 **Dokumen Standar Evaluasi Teknis & Validasi Empiris Testbed**  
+**Peneliti Utama:** M. Ilham Nandari (Institut Palcomtech)  
 **Repositori Resmi:** `https://github.com/BOCIL21/IPS_Machine_Learning_Project`  
 **Waktu Pengujian:** 2026-11-02  
 **Lingkungan Eksekusi:** Ubuntu 22.04 LTS Guest VM (`5.15.0-198-generic x86_64`) pada VMware Workstation  

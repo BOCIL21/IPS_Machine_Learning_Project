@@ -1,7 +1,7 @@
 # LAPORAN PENELITIAN & EVALUASI EKSPERIMENTAL KOMPREHENSIF: SISTEM IPS BERBASIS MACHINE LEARNING
 
 **Judul Penelitian:** Investigasi Empiris Kinerja, Optimisasi Ambang Batas, Studi Ablasi Fitur, dan Ketahanan Skalabilitas Sistem Pencegahan Intrusi (*Intrusion Prevention System* - IPS) Berbasis Machine Learning Terintegrasi Kernel Linux (*iptables*)  
-**Peneliti Utama:** M. Ilham Nandari (Universitas Bina Darma Palembang)  
+**Peneliti Utama:** M. Ilham Nandari (Institut Palcomtech)  
 **Dataset Benchmark:** CSE-CIC-IDS2018 (Canadian Institute for Cybersecurity & AWS Open Data)  
 **Tanggal Pengujian:** 02 November 2026  
 **Repositori GitHub:** [https://github.com/BOCIL21/IPS_Machine_Learning_Project](https://github.com/BOCIL21/IPS_Machine_Learning_Project)  

@@ -9,7 +9,7 @@ Mengikuti standar pelaporan dokumentasi model machine learning internasional yan
 * **Nama Model:** Pengklasifikasi Aliran Jaringan In-Line Berbasis Random Forest untuk Pencegahan Intrusi (`model_ips_rf.joblib`)
 * **Versi Model:** `v1.3.0-production` (Dioptimalkan melalui 5 dimensi riset empiris)
 * **Tanggal Rilis:** November 2026
-* **Pengembang:** M. Ilham Nandari (Universitas Bina Darma Palembang)
+* **Pengembang:** M. Ilham Nandari (Institut Palcomtech)
 * **Arsitektur Model:** Pembelajaran Ensemble — Random Forest Classifier (`sklearn.ensemble.RandomForestClassifier`)
 * **Representasi Input:** Vektor fitur kontinu/diskret 15-dimensi yang diekstraksi dari aliran jaringan dua arah 5-tuple (standar format `CICFlowMeter`).
 * **Output Klasifikasi:** Klasifikasi Biner (*Binary Classification*):

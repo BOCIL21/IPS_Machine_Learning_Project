@@ -1,7 +1,7 @@
 # LAPORAN LENGKAP IMPLEMENTASI DAN PENGUJIAN INTRUSION PREVENTION SYSTEM (IPS) BERBASIS MACHINE LEARNING
 
 **Judul Proyek:** Implementasi Sistem Pencegahan Intrusi (*Intrusion Prevention System* - IPS) Berbasis *Machine Learning* (Random Forest) Terintegrasi Kernel Firewall Linux (*iptables*)  
-**Institusi / Subjek:** Universitas Bina Darma Palembang — Keamanan Jaringan & Sistem Cerdas  
+**Institusi / Subjek:** Institut Palcomtech — Keamanan Jaringan & Sistem Cerdas  
 **Tanggal Eksekusi:** 02 November 2026  
 **Lokasi Direktori Proyek:** `D:\Users\ilham\Documents\IPS_Machine_Learning_Project\`  
 
@@ -246,4 +246,4 @@ D:\Users\ilham\Documents\IPS_Machine_Learning_Project\
 * **Integrasi NetfilterQueue (NFQUEUE):** Untuk skenario *deep in-line packet modification*, modul `NetfilterQueue` dapat diaktifkan agar paket jahat pertama langsung didrop sebelum diteruskan ke interface tujuan.
 
 ---
-*Laporan ini disusun secara otomatis oleh Sistem Coding Assistant Antigravity untuk dokumentasi teknis implementasi skripsi / jurnal penelitian keamanan jaringan Universitas Bina Darma Palembang.*
+*Laporan ini disusun secara otomatis oleh Sistem Coding Assistant Antigravity untuk dokumentasi teknis implementasi skripsi / jurnal penelitian keamanan jaringan Institut Palcomtech.*

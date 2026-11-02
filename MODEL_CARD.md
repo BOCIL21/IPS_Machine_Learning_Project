@@ -101,6 +101,26 @@ Membuktikan ketahanan model saat nomor port diubah atau dihilangkan (*Port-Agnos
 | **5.000** | 67.0 | 14.569 | 15.772 | 16.420 | 26.315 |
 | **10.000** | **66.6** | **14.576** | **15.895** | **16.630** | **26.687** |
 
+### E. Validasi Multi-Iterasi Langsung di Lingkungan Virtual Machine Ubuntu 22.04 LTS (Testbed Nyata)
+
+Evaluasi empiris end-to-end dieksekusi langsung di dalam guest VM Linux Ubuntu 22.04 LTS Server (Kernel `5.15.0-198-generic x86_64`) yang dioperasikan pada hypervisor VMware Workstation:
+
+* **Beban Uji:** 5 Iterasi independen $\times$ 300 aliran data riil = **1.500 alur aliran jaringan**.
+* **Distribusi Kelas Uji:** 50% Benign (750 sampel), 25% DoS GoldenEye/Slowloris (375 sampel), 25% DDoS HOIC/LOIC (375 sampel).
+* **Konfigurasi Operasional:** Ambang Batas Pareto $\theta^* = 0.80$.
+
+| Siklus Iterasi | Alur Diuji | Throughput (flow/s) | Inference P50 | Netfilter Injection | Deteksi DoS | Deteksi DDoS | False Alarm (FAR) |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Iterasi 1** | 300 | 61.7 | 12.162 ms | 7.655 ms | 75/75 (100%) | 75/75 (100%) | 0/150 (0.00%) |
+| **Iterasi 2** | 300 | 60.2 | 12.143 ms | 8.167 ms | 75/75 (100%) | 75/75 (100%) | 0/150 (0.00%) |
+| **Iterasi 3** | 300 | 62.6 | 12.132 ms | 7.505 ms | 75/75 (100%) | 75/75 (100%) | 0/150 (0.00%) |
+| **Iterasi 4** | 300 | 60.4 | 12.167 ms | 8.062 ms | 75/75 (100%) | 75/75 (100%) | 0/150 (0.00%) |
+| **Iterasi 5** | 300 | 57.9 | 12.196 ms | 8.535 ms | 75/75 (100%) | 75/75 (100%) | 0/150 (0.00%) |
+| **TOTAL / RATA-RATA** | **1.500** | **60.6** | **12.155 ms** | **7.988 ms** | **100.0%** | **100.0%** | **0.00%** |
+
+* Data telemetri JSON lengkap: [reports/vm_live_empirical_results.json](reports/vm_live_empirical_results.json).
+* Laporan evaluasi implementasi terbaik: [reports/LAPORAN_PENGUJIAN_VM_DAN_PENERAPAN_TERBAIK_IPS.md](reports/LAPORAN_PENGUJIAN_VM_DAN_PENERAPAN_TERBAIK_IPS.md).
+
 ---
 
 ## 5. Analisis Bobot & Kepentingan Fitur (*Gini Feature Importance*)

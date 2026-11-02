@@ -144,6 +144,24 @@ Menguji kekebalan model terhadap manipulasi port tujuan (`Dst Port`):
 
 ---
 
+### 6. Validasi Empiris Multi-Iterasi Langsung di Lingkungan Virtual Machine (Ubuntu 22.04 LTS)
+
+Sistem diuji secara langsung di dalam lingkungan guest VM Linux Ubuntu 22.04 LTS Server (Kernel `5.15.0-198-generic x86_64`) yang terpasang di VMware Workstation. Pengujian dilakukan sebanyak **5 iterasi berturut-turut** menggunakan **1.500 alur data uji riil** dari dataset resmi CSE-CIC-IDS2018 dengan ambang batas Pareto-optimal $\theta^* = 0.80$:
+
+| Siklus Iterasi | Aliran Diuji | Throughput (flow/s) | Inference P50 | Netfilter Ingestion | DoS Detection | DDoS Detection | False Alarm (FAR) | Whitelist Check |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Iterasi 1** | 300 | 61.7 | 12.162 ms | 7.655 ms | 75/75 (100%) | 75/75 (100%) | 0/150 (0.00%) | 3/3 Lolos |
+| **Iterasi 2** | 300 | 60.2 | 12.143 ms | 8.167 ms | 75/75 (100%) | 75/75 (100%) | 0/150 (0.00%) | 3/3 Lolos |
+| **Iterasi 3** | 300 | 62.6 | 12.132 ms | 7.505 ms | 75/75 (100%) | 75/75 (100%) | 0/150 (0.00%) | 3/3 Lolos |
+| **Iterasi 4** | 300 | 60.4 | 12.167 ms | 8.062 ms | 75/75 (100%) | 75/75 (100%) | 0/150 (0.00%) | 3/3 Lolos |
+| **Iterasi 5** | 300 | 57.9 | 12.196 ms | 8.535 ms | 75/75 (100%) | 75/75 (100%) | 0/150 (0.00%) | 3/3 Lolos |
+| **RATA-RATA / TOTAL** | **1.500** | **60.6** | **12.155 ms** | **7.988 ms** | **100.0%** | **100.0%** | **0.00%** | **100% Lolos** |
+
+* Data telemetri mentah pengujian VM terdokumentasi lengkap pada [reports/vm_live_empirical_results.json](reports/vm_live_empirical_results.json).
+* Laporan komprehensif implementasi terbaik tersedia di [reports/LAPORAN_PENGUJIAN_VM_DAN_PENERAPAN_TERBAIK_IPS.md](reports/LAPORAN_PENGUJIAN_VM_DAN_PENERAPAN_TERBAIK_IPS.md).
+
+---
+
 ## 🏆 Konfigurasi Penerapan Terbaik (*The Best Implementation*)
 
 Berdasarkan seluruh temuan eksperimental, konfigurasi operasional terbaik yang disematkan ke dalam repositori ini:
@@ -174,7 +192,9 @@ Berdasarkan seluruh temuan eksperimental, konfigurasi operasional terbaik yang d
 │   ├── multi_model_benchmark.json      # Data komparasi multi-algoritma ML
 │   ├── stress_test_benchmarks.json     # Data uji beban latensi P50-P99
 │   ├── firewall_bloat_analysis.json    # Data degradasi injeksi rule iptables
+│   ├── vm_live_empirical_results.json  # Data empiris pengujian 5 iterasi di guest VM Ubuntu
 │   ├── comprehensive_experimentation_summary.json # Ringkasan eksekutif seluruh riset
+│   ├── LAPORAN_PENGUJIAN_VM_DAN_PENERAPAN_TERBAIK_IPS.md # Laporan pengujian langsung di VM
 │   └── LAPORAN_PENGUJIAN_DAN_IMPLEMENTASI_TERBAIK_IPS_ML.md # Laporan riset mendalam
 ├── scripts/
 │   ├── train_model.py          # Script pelatihan model pada dataset resmi CSE-CIC-IDS2018

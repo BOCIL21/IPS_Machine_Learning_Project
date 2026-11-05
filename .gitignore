@@ -26,3 +26,11 @@ venv/
 env/
 .idea/
 .vscode/
+
+# Naskah Jurnal Ilmiah & Riset Publikasi (Privat / Lokal Saja)
+JURNAL_ILMIAH_IPS_MACHINE_LEARNING.*
+reports/figures/
+scripts/build_journal_docx.py
+scripts/generate_journal_figures.py
+~$*.docx
+*.docx
